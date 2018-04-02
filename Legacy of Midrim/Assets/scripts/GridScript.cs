@@ -19,13 +19,18 @@ public class GridScript : MonoBehaviour {
     {
         float preCalculatedValueX = Mathf.Sqrt(3) / 2 * hexSize;
         float preCalculatedValueY = hexSize * 0.75f;
-        for (int x = 0; x < gridSize.x; x++)
+        int firstX = -1;
+        for (int y = 0; y < gridSize.y; y++)
         {
-            for(int y = 0; y < gridSize.y; y++)
+            firstX = -Mathf.FloorToInt(y/2);
+            for(int x = 0; x < gridSize.x; x++)
             {
-                grid[x, y] = new Node(new Vector2(x, y),
+                //Debug.Log(string.Format("{0}, {1} floor gives: {2}. -floor gives: {3}", x, y, Mathf.FloorToInt(x / 2), xCoordinate));
+                //Debug.Log(string.Format("The storageCor's are: {0}, {1}. The real coordinates are: {2}, {3}", x, y, firstX + x, y));
+                //Debug.Log(string.Format("x position is: {0} + {1} * {2} + {3}", firstX, x, preCalculatedValueX, y * preCalculatedValueX / 2));
+                grid[x, y] = new Node(new Vector2(firstX + x, y),
                     new Vector3(
-                        x * preCalculatedValueX + y * preCalculatedValueX/2,
+                        (firstX + x) * preCalculatedValueX + y * preCalculatedValueX/2,
                         0.0f,
                         y * preCalculatedValueY
                         ));
@@ -39,6 +44,7 @@ public class GridScript : MonoBehaviour {
         {
             //Debug.Log("Drawing plane");
             GameObject hexagon = Instantiate(hexModel, n.position, Quaternion.identity) as GameObject;
+            hexagon.name = string.Format("{0}, {1}", n.coordinate.x, n.coordinate.y);
             hexagon.transform.localScale = new Vector3(hexagon.transform.localScale.x * hexSize, hexagon.transform.localScale.y * hexSize, hexagon.transform.localScale.z);
         }
     }
