@@ -20,20 +20,19 @@ public class GridScript : MonoBehaviour {
         float preCalculatedValueX = Mathf.Sqrt(3) / 2 * hexSize;
         float preCalculatedValueY = hexSize * 0.75f;
         int firstX = -1;
+        Vector3 nodePosition;
+        RaycastHit hitInfo;
+        int terrainMask = LayerMask.GetMask("terrain");
+        terrainMask = ~terrainMask;
         for (int y = 0; y < gridSize.y; y++)
         {
             firstX = -Mathf.FloorToInt(y/2);
             for(int x = 0; x < gridSize.x; x++)
             {
-                //Debug.Log(string.Format("{0}, {1} floor gives: {2}. -floor gives: {3}", x, y, Mathf.FloorToInt(x / 2), xCoordinate));
-                //Debug.Log(string.Format("The storageCor's are: {0}, {1}. The real coordinates are: {2}, {3}", x, y, firstX + x, y));
-                //Debug.Log(string.Format("x position is: {0} + {1} * {2} + {3}", firstX, x, preCalculatedValueX, y * preCalculatedValueX / 2));
-                grid[x, y] = new Node(new Vector2(firstX + x, y),
-                    new Vector3(
-                        ((firstX + x) * preCalculatedValueX + y * preCalculatedValueX/2),
-                        0.0f,
-                        (y * preCalculatedValueY)
-                        ));
+                nodePosition = new Vector3((firstX + x) * preCalculatedValueX + y * preCalculatedValueX / 2, 110, y * preCalculatedValueY);
+                Physics.Raycast(transform.TransformPoint(nodePosition), -transform.up, out hitInfo, Mathf.Infinity, terrainMask);
+                nodePosition.y = hitInfo.point.y;
+                grid[x, y] = new Node(new Vector2(firstX + x, y), nodePosition);
             }
         }
     }
