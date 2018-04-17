@@ -6,7 +6,7 @@ public class GridScript : MonoBehaviour {
 
     public Vector2 gridSize;
     public GameObject hexModel;
-    public int hexSize;
+    public float hexSize;
 
 	void Start () {
         Node[,] grid = new Node[Mathf.RoundToInt(gridSize.x), Mathf.RoundToInt(gridSize.y)];
@@ -30,9 +30,9 @@ public class GridScript : MonoBehaviour {
                 //Debug.Log(string.Format("x position is: {0} + {1} * {2} + {3}", firstX, x, preCalculatedValueX, y * preCalculatedValueX / 2));
                 grid[x, y] = new Node(new Vector2(firstX + x, y),
                     new Vector3(
-                        (firstX + x) * preCalculatedValueX + y * preCalculatedValueX/2,
+                        ((firstX + x) * preCalculatedValueX + y * preCalculatedValueX/2),
                         0.0f,
-                        y * preCalculatedValueY
+                        (y * preCalculatedValueY)
                         ));
             }
         }
@@ -45,7 +45,7 @@ public class GridScript : MonoBehaviour {
             //Debug.Log("Drawing plane");
             GameObject hexagon = Instantiate(hexModel, n.position, Quaternion.identity) as GameObject;
             hexagon.name = string.Format("{0}, {1}", n.coordinate.x, n.coordinate.y);
-            hexagon.transform.localScale = new Vector3(hexagon.transform.localScale.x * hexSize, hexagon.transform.localScale.y * hexSize, hexagon.transform.localScale.z);
+            hexagon.transform.localScale = new Vector3(hexagon.transform.localScale.x * hexSize, hexagon.transform.localScale.y * hexSize, hexagon.transform.localScale.z * hexSize);
         }
     }
 
