@@ -7,14 +7,35 @@ public class GridScript : MonoBehaviour {
     public Vector2 gridSize;
     public GameObject hexModel;
     public float hexSize;
+    Node[,] grid;
+    Path_finding pathFinding;
 
-	void Start () {
-        Node[,] grid = new Node[Mathf.RoundToInt(gridSize.x), Mathf.RoundToInt(gridSize.y)];
+    private Vector2[] neighbourDirections;
+
+    private void Awake()
+    {
+        neighbourDirections = new Vector2[] { new Vector2(1, 0), new Vector2(1, -1), new Vector2(0, -1),
+            new Vector2(-1, 0), new Vector2(-1, 1), new Vector2(0, 1)
+        };
+        pathFinding = GetComponent<Path_finding>();
+    }
+
+    void Start () {
+        grid = new Node[Mathf.RoundToInt(gridSize.x), Mathf.RoundToInt(gridSize.y)];
 
         GenerateGrid(grid);
         SpawnHexGrid(grid);
+        pathFinding.FindPath(grid[0, 0], grid[6, 3]);
 	}
 	
+    public int MaxGridSize
+    {
+        get
+        {
+            return Mathf.RoundToInt(gridSize.x * gridSize.y);
+        }
+    }
+
     void GenerateGrid(Node[,] grid)
     {
         float preCalculatedValueX = Mathf.Sqrt(3) / 2 * hexSize;
@@ -32,9 +53,36 @@ public class GridScript : MonoBehaviour {
                 nodePosition = new Vector3((firstX + x) * preCalculatedValueX + y * preCalculatedValueX / 2, 110, y * preCalculatedValueY);
                 Physics.Raycast(transform.TransformPoint(nodePosition), -transform.up, out hitInfo, Mathf.Infinity, terrainMask);
                 nodePosition.y = hitInfo.point.y;
-                grid[x, y] = new Node(new Vector2(firstX + x, y), nodePosition);
+                grid[x, y] = new Node(new Vector2(firstX + x, y), nodePosition, true);
             }
         }
+    }
+
+    public int GetFirstX(int y)
+    {
+        return -Mathf.FloorToInt(y / 2);
+    }
+
+    public int XCoordinateToStoreIndex(int x, int y)
+    {
+        return Mathf.FloorToInt(x + y / 2);
+    }
+
+    public List<Node> GetNeighbours(Node node)
+    {
+        List<Node> neighbours = new List<Node>();
+        foreach (Vector2 direction in neighbourDirections){
+            int checkY = Mathf.RoundToInt(node.coordinate.y + direction.y);
+            int checkX = XCoordinateToStoreIndex(Mathf.RoundToInt(node.coordinate.x + direction.x), checkY);
+
+            if(checkX < 0 || checkX >= gridSize.x || checkY < 0 || checkY >= gridSize.y)
+            {
+                continue;
+            }
+            neighbours.Add(grid[checkX, checkY]);
+        }
+
+        return neighbours;
     }
 
     void SpawnHexGrid(Node[,] grid)
