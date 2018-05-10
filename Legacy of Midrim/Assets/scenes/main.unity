@@ -519,9 +519,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b6baddb18417bbe43ac9c21be6761948, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  gridSize: {x: 20, y: 20}
+  gridSize: {x: 100, y: 100}
   hexModel: {fileID: 1609034825237422, guid: 8569f617645a0314a994aa809439f152, type: 2}
   hexSize: 1
+  destinationX: 65
+  destinationY: 90
 --- !u!4 &2087316060
 Transform:
   m_ObjectHideFlags: 0

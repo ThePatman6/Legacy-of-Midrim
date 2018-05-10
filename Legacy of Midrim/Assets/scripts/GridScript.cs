@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System.Diagnostics;
 
 public class GridScript : MonoBehaviour {
 
@@ -10,7 +11,12 @@ public class GridScript : MonoBehaviour {
     Node[,] grid;
     Path_finding pathFinding;
 
+    public int destinationX;
+    public int destinationY;
+
     private Vector2[] neighbourDirections;
+    private List<Node> testPath;
+    private Stopwatch sw;
 
     private void Awake()
     {
@@ -21,13 +27,30 @@ public class GridScript : MonoBehaviour {
     }
 
     void Start () {
+        sw = new Stopwatch();
         grid = new Node[Mathf.RoundToInt(gridSize.x), Mathf.RoundToInt(gridSize.y)];
 
         GenerateGrid(grid);
-        SpawnHexGrid(grid);
-        pathFinding.FindPath(grid[0, 0], grid[6, 3]);
+        //SpawnHexGrid(grid);
+        sw.Start();
+        testPath = pathFinding.FindPath(grid[0, 0], grid[destinationX, destinationY]);
+        sw.Stop();
+        print("Elapsed time: " + sw.ElapsedMilliseconds + " ms");
+        SpawnPath(testPath);
 	}
-	
+
+    private void Update()
+    {
+        if (Input.GetButtonDown("Jump"))
+        {
+            sw.Reset();
+            sw.Start();
+            testPath = pathFinding.FindPath(grid[0, 0], grid[destinationX, destinationY]);
+            sw.Stop();
+            print("Elapsed time: " + sw.ElapsedMilliseconds + " ms");
+        }
+    }
+
     public int MaxGridSize
     {
         get
@@ -90,6 +113,16 @@ public class GridScript : MonoBehaviour {
         foreach(Node n in grid)
         {
             //Debug.Log("Drawing plane");
+            GameObject hexagon = Instantiate(hexModel, n.position, Quaternion.identity) as GameObject;
+            hexagon.name = string.Format("{0}, {1}", n.coordinate.x, n.coordinate.y);
+            hexagon.transform.localScale = new Vector3(hexagon.transform.localScale.x * hexSize, hexagon.transform.localScale.y * hexSize, hexagon.transform.localScale.z * hexSize);
+        }
+    }
+
+    void SpawnPath(List<Node> path)
+    {
+        foreach(Node n in path)
+        {
             GameObject hexagon = Instantiate(hexModel, n.position, Quaternion.identity) as GameObject;
             hexagon.name = string.Format("{0}, {1}", n.coordinate.x, n.coordinate.y);
             hexagon.transform.localScale = new Vector3(hexagon.transform.localScale.x * hexSize, hexagon.transform.localScale.y * hexSize, hexagon.transform.localScale.z * hexSize);

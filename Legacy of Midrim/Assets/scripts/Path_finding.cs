@@ -12,28 +12,19 @@ public class Path_finding : MonoBehaviour {
 
     public List<Node> FindPath(Node startNode, Node destinationNode)
     {
-        List<Node> openSet = new List<Node>();
+        Heap<Node> openSet = new Heap<Node>(gridScript.MaxGridSize);
         HashSet<Node> closedSet = new HashSet<Node>();
 
         openSet.Add(startNode);
 
         while(openSet.Count > 0)
         {
-            Node currentNode = openSet[0];
-            for(int i = 1; i < openSet.Count; i++)
-            {
-                if((openSet[i].fCost < currentNode.fCost) || (openSet[i].fCost == currentNode.fCost && openSet[i].hCost < currentNode.hCost))
-                {
-                    currentNode = openSet[i];
-                }
-            }
+            Node currentNode = openSet.RemoveFirst();
 
             if(currentNode == destinationNode)
             {
                 return RetracePath(startNode, destinationNode);
             }
-
-            openSet.Remove(currentNode);
             closedSet.Add(currentNode);
 
             foreach(Node neighbour in gridScript.GetNeighbours(currentNode))
@@ -53,6 +44,10 @@ public class Path_finding : MonoBehaviour {
                     {
                         openSet.Add(neighbour);
                     }
+                    else
+                    {
+                        openSet.UpdateItem(neighbour);
+                    }
                 }
             }
 
@@ -65,17 +60,17 @@ public class Path_finding : MonoBehaviour {
     {
         List<Node> path = new List<Node>();
         Node currentNode = endNode;
-        Debug.Log(string.Format("({0},{1})", endNode.coordinate.x, endNode.coordinate.y));
+        //Debug.Log(string.Format("({0},{1})", endNode.coordinate.x, endNode.coordinate.y));
         while(currentNode != startNode)
         {
             path.Add(currentNode);
-            Debug.Log(string.Format("currentNode: {0}, {1}", currentNode.coordinate.x, currentNode.coordinate.y));
+            //Debug.Log(string.Format("currentNode: {0}, {1}", currentNode.coordinate.x, currentNode.coordinate.y));
             currentNode = currentNode.parent;
             if(currentNode == null)
             {
                 Debug.Log("CurrentNode was NULL");
             }
-            Debug.Log(string.Format("({0},{1})", currentNode.coordinate.x, currentNode.coordinate.y));
+            //Debug.Log(string.Format("({0},{1})", currentNode.coordinate.x, currentNode.coordinate.y));
         }
         path.Reverse();
 
