@@ -15,6 +15,8 @@ public class Path_finding : MonoBehaviour {
         Heap<Node> openSet = new Heap<Node>(gridScript.MaxGridSize);
         HashSet<Node> closedSet = new HashSet<Node>();
 
+        int defaultMoveCost = Mathf.RoundToInt(gridScript.hexSize);
+
         openSet.Add(startNode);
 
         while(openSet.Count > 0)
@@ -33,11 +35,12 @@ public class Path_finding : MonoBehaviour {
                     continue;
                 }
 
-                int newGCost = currentNode.gCost + 1;
+                int newGCost = currentNode.gCost + defaultMoveCost;
                 if(newGCost < neighbour.gCost || !openSet.Contains(neighbour))
                 {
                     neighbour.gCost = newGCost;
-                    neighbour.hCost = GetDistance(neighbour, destinationNode);
+                    //neighbour.hCost = GetHeuristicDistance(neighbour, destinationNode);
+                    neighbour.hCost = Mathf.RoundToInt(Vector3.Distance(neighbour.position, destinationNode.position));
                     neighbour.parent = currentNode;
 
                     if (!openSet.Contains(neighbour))
@@ -77,7 +80,7 @@ public class Path_finding : MonoBehaviour {
         return path;
     }
 
-    int GetDistance(Node nodeA, Node nodeB)
+    int GetHeuristicDistance(Node nodeA, Node nodeB)
     {
         return Mathf.RoundToInt(Mathf.Max(Mathf.Abs(nodeA.coordinate.x - nodeB.coordinate.y), Mathf.Abs(nodeA.coordinate.x - nodeB.coordinate.y), Mathf.Abs(nodeA.z - nodeB.z)));
     }

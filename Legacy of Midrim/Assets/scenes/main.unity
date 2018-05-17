@@ -522,8 +522,8 @@ MonoBehaviour:
   gridSize: {x: 100, y: 100}
   hexModel: {fileID: 1609034825237422, guid: 8569f617645a0314a994aa809439f152, type: 2}
   hexSize: 1
-  destinationX: 65
-  destinationY: 90
+  destinationX: 75
+  destinationY: 88
 --- !u!4 &2087316060
 Transform:
   m_ObjectHideFlags: 0

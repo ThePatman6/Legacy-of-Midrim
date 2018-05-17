@@ -37,7 +37,9 @@ public class GridScript : MonoBehaviour {
         sw.Stop();
         print("Elapsed time: " + sw.ElapsedMilliseconds + " ms");
         SpawnPath(testPath);
-	}
+
+
+    }
 
     private void Update()
     {
